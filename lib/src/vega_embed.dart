@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vega_embed_flutter/vega_embed_webview.dart';
 import 'package:web/web.dart' as web;
 import 'package:vega_embed_flutter/src/fakeui/fake_platformViewRegistry.dart'
     if (dart.library.html) 'dart:ui' as ui;

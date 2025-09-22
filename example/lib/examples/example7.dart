@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart' hide Padding;
-import 'package:vega_embed_flutter/vega_embed_flutter.dart' hide VegaEmbedOptions;
-import 'package:vega_embed_flutter/src/vega_interops.dart';
+import 'package:vega_embed_flutter/vega_embed_flutter.dart';
+import 'package:vega_embed_flutter/vega_embed_webview.dart';
 
 /// An interactive multi line plot with hover tool tip.
 /// Uses the VegaEmbedOptions to set padding for the embeded plot.

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:vega_embed_flutter/vega_embed_flutter.dart';
+import 'package:vega_embed_flutter/vega_embed_webview.dart';
 import 'examples/examples.dart';
 import 'code_box.dart';
 
