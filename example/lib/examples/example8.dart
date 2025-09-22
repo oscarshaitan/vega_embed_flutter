@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart' hide Padding;
-import 'package:vega_embed_flutter/vega_embed_flutter.dart';
+import 'package:vega_embed_flutter/vega_embed_flutter.dart' hide VegaEmbedOptions;
+import 'package:vega_embed_flutter/src/vega_interops.dart';
 
 /// An interactive multi line plot with hover tool tip.
 /// Uses the VegaEmbedOptions to set different name for the links.
@@ -8,7 +9,7 @@ class Example8 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return VegaLiteEmbedder(
-      viewFactoryId: UniqueKey().toString(),
+      viewFactoryId: "8",
       vegaLiteSpecLocation: 'assets/vega_lite_specs/bar_chart.json',
       vegaOptions: VegaEmbedOptions(
         i18n: I18N(
