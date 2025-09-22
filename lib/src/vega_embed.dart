@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html';
+import 'package:web/web.dart' as web;
 import 'package:vega_embed_flutter/src/fakeui/fake_platformViewRegistry.dart'
     if (dart.library.html) 'dart:ui' as ui;
 
 import 'package:vega_embed_flutter/src/vega_interops.dart';
-import 'package:vega_embed_flutter/src/vega-related-css.dart';
+import 'package:vega_embed_flutter/src/vega_related_css.dart';
 
 /// A Widget that embeds VegaLite charts on to the [HtmlElementView] widget to
 /// bring vega-charts in flutter web.
@@ -14,61 +13,61 @@ class VegaLiteEmbedder extends StatefulWidget {
   /// Please ensure this. Otherwise it might result in some unwanted behavior.
   final String viewFactoryId;
 
-  /// This is usually a URL pointing to json file or a json file served as part of your web assets.
+  /// This is usually a URL pointing to a json file or a json file served as part of your web assets.
   final String vegaLiteSpecLocation;
 
   /// Set of options for vegaEmbedder. Please check the documentation of vega-embed for more info.
-  /// This is dartified version of the options available.
+  /// This is a dartified version of the options available.
   /// Please bear in mind this functionality is not tested and could break easily.
   final VegaEmbedOptions? vegaOptions;
 
   /// Constructor for VegaLiteEmbedder.
-  VegaLiteEmbedder({
+  const VegaLiteEmbedder({
+    super.key,
     required this.viewFactoryId,
     required this.vegaLiteSpecLocation,
     this.vegaOptions,
   });
   @override
-  _VegaLiteEmbedderState createState() => _VegaLiteEmbedderState();
+  State<VegaLiteEmbedder> createState() => _VegaLiteEmbedderState();
 }
 
 class _VegaLiteEmbedderState extends State<VegaLiteEmbedder> {
-  /// The Body element which hold the styles and scripts
-  BodyElement bodyElement = BodyElement();
+  /// The root element for the view
+  final web.HTMLDivElement _element = web.HTMLDivElement();
 
   /// The div element where the chart will be embedded
-  late DivElement divElement;
+  late web.HTMLDivElement _chartDiv;
 
   @override
   void initState() {
     super.initState();
-    divElement = DivElement()..id = widget.viewFactoryId;
+    _chartDiv = web.HTMLDivElement()..id = widget.viewFactoryId;
 
-    // add the div element which holds the plot.
-    bodyElement.append(divElement);
+    _element.append(_chartDiv);
 
     // Add the css style elements to renders plots options properly.
-    var vegaEmbedStyle = StyleElement()..text = VegaEmbedStyle;
-    var vegaToolTipStyle = StyleElement()..text = VegaToolTipStyle;
-    bodyElement.append(vegaEmbedStyle);
-    bodyElement.append(vegaToolTipStyle);
+    final styleElement = web.HTMLStyleElement()..textContent = vegaEmbedStyle;
+    final tooltipStyleElement = web.HTMLStyleElement()..textContent = vegaToolTipStyle;
+    _element.append(styleElement);
+    _element.append(tooltipStyleElement);
   }
 
   @override
   Widget build(BuildContext context) {
     ui.platformViewRegistry.registerViewFactory(widget.viewFactoryId,
         (int viewId) {
-      return bodyElement;
+      return _element;
     });
     if (widget.vegaOptions != null) {
       if (widget.vegaOptions?.defaultStyle is String) {
-        var embedStyle = StyleElement()
+        final embedStyle = web.HTMLStyleElement()
           ..innerText = widget.vegaOptions?.defaultStyle.toString() ?? '';
-        bodyElement.append(embedStyle);
+        _element.append(embedStyle);
       }
-      vegaEmbed(divElement, widget.vegaLiteSpecLocation, widget.vegaOptions);
+      vegaEmbed(_chartDiv, widget.vegaLiteSpecLocation, widget.vegaOptions);
     } else {
-      vegaEmbed(divElement, widget.vegaLiteSpecLocation);
+      vegaEmbed(_chartDiv, widget.vegaLiteSpecLocation);
     }
     return HtmlElementView(viewType: widget.viewFactoryId);
   }

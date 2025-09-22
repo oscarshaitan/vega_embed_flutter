@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart' hide Actions;
-import 'package:vega_embed_flutter/src/vega-related-css.dart';
+import 'package:vega_embed_flutter/src/vega_related_css.dart';
 import 'package:vega_embed_flutter/src/web_view/vega_embed_options.dart';
 
 import 'package:webview_flutter/webview_flutter.dart';
@@ -16,36 +16,55 @@ class VegaLiteWebViewEmbedder extends StatefulWidget {
 
   /// Set of options for vegaEmbeder. Please check the documentation of vega-embed for more info.
   /// This is dartified version of the options avaailable.
-  VegaLiteWebViewEmbedder({
+  const VegaLiteWebViewEmbedder({
+    Key? key,
     required this.vegaLiteSpecLocation,
     this.vegaEmbedOptions,
-  });
+  }) : super(key: key);
   @override
-  _VegaLiteWebViewEmbedderState createState() =>
+  State<VegaLiteWebViewEmbedder> createState() =>
       _VegaLiteWebViewEmbedderState();
 }
 
 class _VegaLiteWebViewEmbedderState extends State<VegaLiteWebViewEmbedder> {
-  late VegaEmbedOptions? _embedOptions;
-  late WebViewController _controller;
+  late final WebViewController _controller;
 
   @override
   void initState() {
     super.initState();
-    _embedOptions = widget.vegaEmbedOptions;
+
+    final WebViewController controller = WebViewController();
+    controller
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageFinished: (String url) {
+            controller.runJavaScript('''
+              var allDetails = document.querySelectorAll('details');
+              if(allDetails.length > 0){
+                allDetails.forEach(e => e.remove());
+              }
+            ''');
+          },
+          onWebResourceError: (WebResourceError error) {
+            debugPrint(error.toString());
+          },
+        ),
+      );
+    _controller = controller;
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
+    return FutureBuilder<String>(
       future: DefaultAssetBundle.of(context)
           .loadString(widget.vegaLiteSpecLocation),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          var _divId = 'plot_div';
-          var vegaEmbedScript =
-              'vegaEmbed("#$_divId", ${snapshot.data}, ${json.encode(_embedOptions?.toJson() ?? '')})';
-          var html = '''
+          final divId = 'plot_div';
+          final vegaEmbedScript =
+              'vegaEmbed("#$divId", ${snapshot.data}, ${json.encode(widget.vegaEmbedOptions?.toJson() ?? '')})';
+          final html = '''
         <!DOCTYPE html>
         <html lang="en">
           <head>
@@ -54,10 +73,10 @@ class _VegaLiteWebViewEmbedderState extends State<VegaLiteWebViewEmbedder> {
             <script src="https://cdn.jsdelivr.net/npm/vega@5"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-lite@4"></script>
             <script src="https://cdn.jsdelivr.net/npm/vega-embed@6"></script>
-            <style>$VegaEmbedStyle</style>
-            <style>$VegaToolTipStyle</style>
+            <style>$vegaEmbedStyle</style>
+            <style>$vegaToolTipStyle</style>
           </head>
-          <div id="$_divId" width="100%" height="50%"></div>
+          <div id="$divId" width="100%" height="50%"></div>
           <script type="text/javascript">           
             $vegaEmbedScript;
           </script>
@@ -66,34 +85,19 @@ class _VegaLiteWebViewEmbedderState extends State<VegaLiteWebViewEmbedder> {
 
         ''';
 
-          return WebView(
-              javascriptMode: JavascriptMode.unrestricted,
-              onWebResourceError: (error) {
-                print(error);
-              },
-              onPageFinished: (url) {
-                _controller.evaluateJavascript('''
-                  var allDetails = document.querySelectorAll('details');
-                  if(allDetails.length > 0){
-                    allDetails.forEach(e => e.remove());
-                  }
-                ''');
-              },
-              onWebViewCreated: (WebViewController webViewController) {
-                webViewController.loadUrl('data:text/html;charset=utf-8,' +
-                    Uri.encodeComponent(html));
-                _controller = webViewController;
-              });
+          _controller.loadHtmlString(html);
+
+          return WebViewWidget(controller: _controller);
         }
         if (snapshot.hasError) {
-          Center(
+          return Center(
             child: Text(
               'Sorry couldn\'t load the spec. Please check the path : ${widget.vegaLiteSpecLocation}',
               softWrap: true,
             ),
           );
         }
-        return Center(
+        return const Center(
           child: CircularProgressIndicator(),
         );
       },

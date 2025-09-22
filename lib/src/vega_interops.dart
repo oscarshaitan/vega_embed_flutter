@@ -1,39 +1,128 @@
 @JS()
 library vega_interops;
 
-import 'package:js/js.dart';
+import 'dart:js_interop';
 
-/// proxy class for vegaEmbed global function.
-@JS('vegaEmbed')
-external void vegaEmbed(dynamic domElement, String vegaSchema,
-    [VegaEmbedOptions? vegaEmbedOptions]);
+@JS()
+@anonymous
+extension type I18N(JSObject o) {
+  /// Language mapping keys for export menu
+  external factory I18N({
+    //ignore: non_constant_identifier_names
+    String? COMPILED_ACTION,
+    //ignore: non_constant_identifier_names
+    String? EDITOR_ACTION,
+    //ignore: non_constant_identifier_names
+    String? PNG_ACTION,
+    //ignore: non_constant_identifier_names
+    String? SOURCE_ACTION,
+    //ignore: non_constant_identifier_names
+    String? SVG_ACTION,
+  });
+}
+
+/// Padding for charts in pixels
+@JS()
+@anonymous
+extension type Padding(JSObject o) {
+  /// Padding for charts in pixels
+  external factory Padding({
+    num? left,
+    num? right,
+    num? top,
+    num? bottom,
+  });
+
+  /// padding from left margin
+  external num? get left;
+
+  /// padding from right margin
+  external num? get right;
+
+  /// padding from top margin
+  external num? get top;
+
+  /// padding from bottom margin
+  external num? get bottom;
+}
+
+@JS()
+@anonymous
+extension type Actions(JSObject o) {
+  /// Which menu actions to show.
+  external factory Actions({
+    bool? editor,
+    bool? export,
+    bool? source,
+    bool? compiled,
+  });
+
+  /// Show open in editor
+  external bool? get editor;
+
+  /// Show export options
+  external bool? get export;
+
+  /// Show source
+  external bool? get source;
+
+  /// show compiled vega spec.
+  external bool? get compiled;
+}
+
+@JS()
+@anonymous
+extension type FormatLocale(JSObject o) {
+  /// Sets the default locale definition for number formatting. See the
+  /// d3-format locale collection for definition files for a variety of
+  /// languages. Note that this is a global setting.
+  external factory FormatLocale({
+    String? decimal,
+    String? thousands,
+    JSArray? groupings,
+    JSArray? currency,
+    JSArray? numerals,
+  });
+}
+
+@JS()
+@anonymous
+extension type TimeFormatLocale(JSObject o) {
+  /// Sets the default locale definition for date/time formatting. See the
+  /// d3-time-format locale collection for definition files for a variety of
+  /// languages. Note that this is a global setting.
+  external factory TimeFormatLocale({
+    String? dateTime,
+    String? date,
+    String? time,
+    JSArray? periods,
+    JSArray? days,
+    JSArray? shortDays,
+    JSArray? months,
+    JSArray? shortMonths,
+  });
+}
 
 /// Represents the VegaEmbed Options like theme, renderer etc.
 @JS()
 @anonymous
-class VegaEmbedOptions {
+extension type VegaEmbedOptions(JSObject o) {
   /// Embed options for VegaLiteEmbedder
   external factory VegaEmbedOptions({
     String? mode,
     String? theme,
-    dynamic defaultStyle,
+    JSAny? defaultStyle,
     String? renderer,
-    LogLevel? logLevel,
-    dynamic tooltip,
-    // todo: Define loader
-    // todo: define patch
+    String? logLevel,
+    JSAny? tooltip,
     num? width,
     num? height,
     Padding? padding,
     Actions? actions,
     num? scaleFactor,
-    // todo: define config
-
     String? editorUrl,
     String? sourceHeader,
     String? sourceFooter,
-    // todo: define hover,
-
     I18N? i18n,
     String? downloadFileName,
     FormatLocale? formatLocale,
@@ -41,201 +130,75 @@ class VegaEmbedOptions {
   });
 
   /// mode
-  external String get mode;
+  external String? get mode;
 
   /// Theme to be used
-  external String get theme;
+  external String? get theme;
 
   /// Default style
-  external dynamic get defaultStyle;
+  external JSAny? get defaultStyle;
 
   /// Render svg or canvas
-  external String get renderer;
+  external String? get renderer;
 
   ///Provide a tooltip handler, customize the default Vega Tooltip handler,
   ///or disable the default handler.
-  external dynamic get toolTip;
+  external JSAny? get toolTip;
 
   /// Sets the view width in pixels.
-  external num get width;
+  external num? get width;
 
   /// Sets the view height in pixels.
-  external num get height;
+  external num? get height;
 
   /// Sets the view padding in pixels.
-  external Padding get padding;
+  external Padding? get padding;
 
   /// Export actions to show.
-  external Actions get actions;
+  external Actions? get actions;
 
   /// The number by which to multiply the width and height (default 1) of an
   /// exported PNG or SVG image.
-  external num get scaleFactor;
+  external num? get scaleFactor;
 
   ///The URL at which to open embedded Vega specs in a Vega editor. Defaults
   ///to "http://vega.github.io/editor/". Internally, Vega-Embed uses HTML5
   ///postMessage to pass the specification information to the editor.
-  external String get editorUrl;
+  external String? get editorUrl;
 
   /// HTML to inject into the head tag of the page generated by the "View
   /// Source" and "View Vega" action link. For example, this can be used to
   /// add code for syntax highlighting.
-  external String get sourceHeader;
+  external String? get sourceHeader;
 
   /// HTML to inject into the end of the page generated by the "View Source"
   /// and "View Vega" action link. The text will be added immediately before
   /// the closing body tag.
-  external String get sourceFooter;
+  external String? get sourceFooter;
 
   /// Sets the file name (default: visualization) for charts downloaded using
   /// the png or svg action.
-  external String get downloadFileName;
+  external String? get downloadFileName;
 
   /// Sets the default locale definition for number formatting. See the
   /// d3-format locale collection for definition files for a variety of
   /// languages. Note that this is a global setting.
-  external FormatLocale get formatLocale;
+  external FormatLocale? get formatLocale;
 
   /// Sets the default locale definition for date/time formatting. See the
   /// d3-time-format locale collection for definition files for a variety of
   /// languages. Note that this is a global setting.
-  external TimeFormatLocale get timeFormatLocale;
+  external TimeFormatLocale? get timeFormatLocale;
 
   /// Sets the current log level.
-  external LogLevel get logLevel;
+  external String? get logLevel;
 
   /// This property maps keys to string values for the action's text.
   /// By default, the text is in English.
-  external I18N get i18n;
+  external I18N? get i18n;
 }
 
-@JS()
-@anonymous
-
-/// Language mapping keys for export menu
-class I18N {
-  /// Language mapping keys for export menu
-  external factory I18N({
-    //ignore: non_constant_identifier_names
-    String COMPILED_ACTION,
-    //ignore: non_constant_identifier_names
-    String EDITOR_ACTION,
-    //ignore: non_constant_identifier_names
-    String PNG_ACTION,
-    //ignore: non_constant_identifier_names
-    String SOURCE_ACTION,
-    //ignore: non_constant_identifier_names
-    String SVG_ACTION,
-  });
-}
-
-/// Log level
-enum LogLevel {
-  /// Log level None
-  None,
-
-  /// Log level error
-  Error,
-
-  /// Log level warn
-  Warn,
-
-  /// Log level Info
-  Info,
-
-  /// Log level Debug
-  Debug,
-}
-
-@JS()
-@anonymous
-
-/// Padding for charts in pixels
-class Padding {
-  /// Padding for charts in pixels
-  external factory Padding({
-    num left,
-    num right,
-    num top,
-    num bottom,
-  });
-
-  /// padding from left margin
-  external num get left;
-
-  /// padding from right margin
-  external num get right;
-
-  /// padding from top margin
-  external num get top;
-
-  /// padding from bottom margin
-  external num get bottom;
-}
-
-@JS()
-@anonymous
-
-/// Which menu actions to show.
-class Actions {
-  /// Which menu actions to show.
-  external factory Actions({
-    bool editor = true,
-    bool export = true,
-    bool source = true,
-    bool compiled = false,
-  });
-
-  /// Show open in editor
-  external bool get editor;
-
-  /// Show export options
-  external bool get export;
-
-  /// Show source
-  external bool get source;
-
-  /// show compiled vega spec.
-  external bool get compiled;
-}
-
-@JS()
-@anonymous
-
-/// Sets the default locale definition for number formatting. See the
-/// d3-format locale collection for definition files for a variety of
-/// languages. Note that this is a global setting.
-class FormatLocale {
-  /// Sets the default locale definition for number formatting. See the
-  /// d3-format locale collection for definition files for a variety of
-  /// languages. Note that this is a global setting.
-  external factory FormatLocale({
-    String decimal,
-    String thousands,
-    List<num> groupings,
-    List<String> currency,
-    List<String> numerals,
-  });
-}
-
-@JS()
-@anonymous
-
-/// Sets the default locale definition for date/time formatting. See the
-/// d3-time-format locale collection for definition files for a variety of
-/// languages. Note that this is a global setting.
-class TimeFormatLocale {
-  /// Sets the default locale definition for date/time formatting. See the
-  /// d3-time-format locale collection for definition files for a variety of
-  /// languages. Note that this is a global setting.
-  external factory TimeFormatLocale({
-    String dateTime,
-    String date,
-    String time,
-    List<String> periods,
-    List<String> days,
-    List<String> shortDays,
-    List<String> months,
-    List<String> shortMonths,
-  });
-}
+/// proxy class for vegaEmbed global function.
+@JS('vegaEmbed')
+external void vegaEmbed(JSAny domElement, String vegaSchema,
+    [VegaEmbedOptions? vegaEmbedOptions]);
